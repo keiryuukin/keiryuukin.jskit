@@ -122,6 +122,7 @@ $.fn.extend({
 				direction,
 				movedPos,
 				cursorX,
+				cursorStartX,
 				holdingTime,
 				longHold,
 				targeteq //indicate which index of slide will be shown after touch/mouse button released
@@ -133,9 +134,11 @@ $.fn.extend({
 					holding = true;
 					if (e.type == "touchstart") {
 						cursorX = e.targetTouches[0].pageX;
+						cursorStartX = e.targetTouches[0].pageX;
 					}
 					if (e.type == "mousedown") {
 						cursorX = e.pageX;
+						cursorStartX = e.pageX;
 					}
 					startPos = cursorX - posX;
 					orgPos = parseInt($ul.css("left"));
@@ -154,6 +157,7 @@ $.fn.extend({
 						if (e.type == "mousemove") {
 							cursorX = e.pageX;
 						}
+						var dragged = cursorStartX-cursorX;
 						lastMove = movedPos;
 						console.log(lastMove + "lastmove");
 						currentPos = parseInt($(this).css("left"));
@@ -180,7 +184,7 @@ $.fn.extend({
 						targeteq = -(parseInt((currentPos - liWidth / 2) / liWidth));
 
 						// console.log(targeteq + "targeteq")
-						console.log("movedPosmove: " + Math.abs(movedPos))
+						console.log("movedPosmove: " + dragged)
 
 					}
 					// console.log("cur"+currentPos);
@@ -190,9 +194,9 @@ $.fn.extend({
 					// console.log("lastMove: " + lastMove + " movedPos: " +movedPos);
 					clearTimeout(holdingTime);
 					console.log(longHold + "AD")
-					if (longHold != true && direction == "next" && Math.abs(movedPos) > liWidth / 10) {
+					if (longHold != true && direction == "next" && dragged > liWidth / 10) {
 						slider.change(e, "next");
-					} else if (longHold != true && direction == "prev" && Math.abs(movedPos) > liWidth / 10) {
+					} else if (longHold != true && direction == "prev" && dragged < -(liWidth / 10)) {
 						slider.change(e, "prev")
 					} else {
 						var $active = $li.filter(".active");

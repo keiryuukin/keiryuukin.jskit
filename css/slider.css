@@ -1,0 +1,85 @@
+ul,
+li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+a {
+	text-decoration: none;
+}
+.slider{
+	width: 100%;
+	overflow: hidden;
+}
+.frame {
+	width: 200px;
+	height: 100px;
+	margin: 0 auto;
+	position: relative;
+	border: 1px solid black;
+	/*overflow: hidden;*/
+}
+
+.frame .slides {
+	height: 100px;
+	position: relative;
+	left: 0;
+}
+
+.frame li {
+	position: absolute;
+	width: 100%;
+	margin-right: 0px;
+	font-size: 36px;
+	text-align: center;
+	line-height: 100px;
+	height: 100px;
+}
+
+.slider-nav {
+	margin: 0 auto;
+	width: 100%;
+	text-align: center;
+}
+
+.slider-nav a {
+	display: inline-block;
+	font-size: 36px;
+}
+
+.pager a {
+	width: 20px;
+	height: 20px;
+	background-color: yellow;
+	border: 1px solid black;
+	margin: 5px;
+}
+
+.pager a.active {
+	background-color: black;
+}
+
+.R {
+	background-color: red;
+}
+
+.G {
+	background-color: green;
+}
+
+.B {
+	background-color: blue;
+}
+
+.C {
+	background-color: cyan;
+}
+
+.M {
+	background-color: magenta;
+}
+
+.Y {
+	background-color: yellow;
+}

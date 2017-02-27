@@ -8,7 +8,9 @@ $.fn.extend({
 		var liLength = $li.length;
 		var $next = $(".slide-next", that);
 		var $prev = $(".slide-prev", that);
-
+		var $active;
+		var activeIndex;
+		var $sliderNav = $(".slider-nav", that);
 		$(window).resize(function() {
 			$frame = $(".frame", that);
 			$ul = $(".slides", that);
@@ -16,6 +18,8 @@ $.fn.extend({
 			liWidth = $li.width();
 			liLength = $li.length - 3;
 			slider.reposition();
+			slider.buildNav();
+
 			console.log(liLength)
 		})
 
@@ -38,7 +42,9 @@ $.fn.extend({
 				$.each(attrObj, function(i) {
 					var attr = attrObj[i];
 					var attrValue = target.attr(attr.name);
-					liCode += attr.name + "=\"" + attrValue + "\" ";
+					if (attr.name != "id") {
+						liCode += attr.name + "=\"" + attrValue + "\" ";
+					}
 				})
 				liCode += "data-copy=\"true\">" + targetHtml + "</li>"
 				d = true;
@@ -53,7 +59,7 @@ $.fn.extend({
 			return d;
 		};
 		Slider.prototype.reposition = function() {
-			var $active = $li.filter(".active");
+			$active = $li.filter(".active");
 			var index = $active.index() + 1;
 			var pos = -liWidth * 2;
 			$li.each(function() {
@@ -63,29 +69,40 @@ $.fn.extend({
 			$ul.css("left", -(parseInt($active.css("left"))))
 
 		};
-		that.append(
-			$("<div>").addClass("slider-nav").append(
-				$("<a>").addClass("slide-prev").attr("href","#").html("&lt;")
-			).append(
-				$("<a>").addClass("slide-next").attr("href","#").html("&gt;")
-			)
-		)
-
 		Slider.prototype.buildNav = function() {
-			var sliderNavHtml = "";
+			$active = $li.filter(".active");
+			activeIndex = $active.data("index");
+			var list = "";
+			for (var i = 0; i < liLength; i++) {
+				list += "<a></a>"
+			}
+			var $nav = $("<div>");
+			$nav.append(
+				$("<a>").addClass("slide-prev").attr("href", "#").html("&lt;")
+			).append(
+				$("<a>").addClass("slide-next").attr("href", "#").html("&gt;")
+			).append(
+				$("<div>").addClass("pager").append(list)
+			)
+			$sliderNav.html($nav.html());
+			$sliderNav.find(".pager>a").eq(activeIndex).addClass("active");
+
 		}
-		Slider.prototype.change = function(e, direction) {
+		Slider.prototype.change = function($this, direction) {
 			function sliding(direction) {
+				
 				var animating = $ul.is(":animated");
 				if (!animating) {
 					var $active = $li.filter(".active");
 					var index = $active.index();
+					console.log(index+"GG")
 					var $nextSlide = $li.eq(index + 1);
 					var $prevSlide = $li.eq(index - 1);
+					activeIndex = $nextSlide.data("index")
 					var movingPos;
 					console.log(index + "index")
 
-					$active.removeClass("active");
+					$(".active", that).removeClass("active");
 
 					if (direction == "next") {
 						if (index > liLength) {
@@ -95,8 +112,9 @@ $.fn.extend({
 						}
 						movingPos = -(parseInt($nextSlide.css("left")));
 						$nextSlide.addClass("active");
-					}
-					if (direction == "prev") {
+						console.log($nextSlide.data("index"))
+						$sliderNav.find(".pager>a").eq(activeIndex).addClass("active");
+					} else if (direction == "prev") {
 						if (index == 1) {
 							index = liLength + 1;
 							$ul.css("left", -(parseInt($li.eq(liLength + 1).css("left"))))
@@ -104,6 +122,10 @@ $.fn.extend({
 						}
 						movingPos = -(parseInt($prevSlide.css("left")));
 						$prevSlide.addClass("active");
+						$sliderNav.find(".pager>a").eq(activeIndex).addClass("active");
+					} else if(direction == "pager") {
+						index = $this.index();
+						movingPos = 0;
 					}
 					$ul.animate({ "left": movingPos }, function() {});
 				}
@@ -118,9 +140,7 @@ $.fn.extend({
 				orgPos, //$ul left pos
 				currentPos, //$ul left pos(moving)
 				holding,
-				lastMove,
 				direction,
-				movedPos,
 				cursorX,
 				cursorStartX,
 				holdingTime,
@@ -134,7 +154,7 @@ $.fn.extend({
 					holding = true;
 					if (e.type == "touchstart") {
 						cursorX = e.targetTouches[0].pageX;
-						cursorStartX =e.targetTouches[0].pageX;
+						cursorStartX = e.targetTouches[0].pageX;
 					}
 					if (e.type == "mousedown") {
 						cursorX = e.pageX;
@@ -142,20 +162,12 @@ $.fn.extend({
 					}
 					startPos = cursorX - posX;
 					orgPos = parseInt($ul.css("left"));
-					console.log(cursorX)
+
 				}
 				if (e.type == "touchmove" || "mousemove") {
 					if (holding) {
-						if (e.type == "touchmove") {
-							cursorX = e.targetTouches[0].pageX;
-						}
-						if (e.type == "mousemove") {
-							cursorX = e.pageX;
-						}
-						// var dragged = orgPos;
 						clearTimeout(holdingTime);
 						holdingTime = setTimeout(function() {
-							console.log(longHold)
 							longHold = true;
 						}, 250)
 						if (e.type == "touchmove") {
@@ -164,55 +176,44 @@ $.fn.extend({
 						if (e.type == "mousemove") {
 							cursorX = e.pageX;
 						}
-						lastMove = movedPos;
-						console.log("lastmove: " + lastMove);
+						var dragged = cursorStartX - cursorX;
+						// console.log(lastMove + "lastmove");
 						currentPos = parseInt($(this).css("left"));
 						touchingPos = cursorX - posX; //touching left position of the ul;
 						currentPos += touchingPos - startPos;
-						movedPos = orgPos - currentPos;
-						var dragged = -(cursorX-cursorStartX);
-						if (lastMove < movedPos) {
-							direction = "next";
-						}
-						if (lastMove > movedPos) {
-							direction = "prev";
-						}
 						$(this).css({ "left": currentPos }); //start moving the slide
-						if (currentPos > 0) {//start of the slide
+						if (currentPos > 0) {
 							$(this).css({ "left": -(liWidth * liLength) })
 							startPos = cursorX - posX;
-							draggedOrg = -1000;
 						}
-						if (currentPos < -(liWidth * liLength)) {//end of the slide
+						if (currentPos < -(liWidth * liLength)) {
+							console.log(liLength + "fffgfdgfadsf")
 							$(this).css({ "left": 0 });
 							startPos = cursorX - posX;
 						}
 						targeteq = -(parseInt((currentPos - liWidth / 2) / liWidth));
 
 						// console.log(targeteq + "targeteq")
-						console.log("movedPosmove: " + (movedPos))
-						console.log("dragged: " + dragged)
+						// console.log("dragged: " + dragged)
 
 					}
 					// console.log("cur"+currentPos);
 				}
 				if (e.type == "touchend" || e.type == "mouseup") {
-					console.log(movedPos+"ddd")
 					holding = false;
 					// console.log("lastMove: " + lastMove + " movedPos: " +movedPos);
 					clearTimeout(holdingTime);
-					console.log(longHold + "AD")
-					if (longHold != true && direction == "next" && movedPos >= liWidth / 10) {
+					// console.log(longHold + "AD")
+					if (longHold != true && dragged > liWidth / 10) {
 						slider.change(e, "next");
-					} else if (longHold != true && direction == "prev" && movedPos <= liWidth / 10) {
-						console.log(movedPos + "EN")
-						slider.change(e, "prev");
+					} else if (longHold != true && dragged < -(liWidth / 10)) {
+						slider.change(e, "prev")
 					} else {
-						var $active = $li.filter(".active");
 						var target = $ul.find("li").eq(targeteq + 1);
 						$active.removeClass("active");
 						target.addClass("active")
 						var newPos = parseInt(target.css("left"));
+
 						$ul.animate({ "left": -newPos }, 200)
 					}
 					longHold = false;
@@ -226,18 +227,22 @@ $.fn.extend({
 		Slider.prototype.init = function() {
 			var count = 0;
 			$li.each(function() {
-				$(this).addClass("i" + count);
+				$(this).attr("data-index", count);
 				count++;
 			})
+			$li.eq(0).addClass("active");
 			switch (type) {
 				case "fade":
 
 					break;
 				case "basic":
+
 					slider.duplicate();
+					slider.buildNav();
+					console.log(activeIndex)
 					slider.reposition();
 					slider.drag();
-					$li.eq(1).addClass("active");
+
 
 					break;
 				case "adv":
@@ -248,12 +253,23 @@ $.fn.extend({
 		}
 		slider.init();
 
-		that.on("click", ".slide-next", function(e) {
-			slider.change(e, "next");
+		$sliderNav.on("click", "a", function(e) {
+			e.preventDefault();
+			var $this = $(this)
+			if ($(this).hasClass("slide-next") > 0) {
+				slider.change($this, "next");
+			} else if ($(this).hasClass("slide-prev") > 0) {
+				slider.change($this, "prev");
+			} else {
+				slider.change($this,"pager");
+			}
+
 		})
-		that.on("click", ".slide-prev", function(e) {
-			slider.change(e, "prev");
-		})
+
+		/*$(".pager>a",$sliderNav).click(function(e){
+			e.preventDefault();
+			var index = $(this).index();
+		})*/
 	}
 })
 $(function() {

@@ -13,7 +13,8 @@ a {
 	overflow: hidden;
 }
 .frame {
-	width: 200px;
+	max-width: 1000px;
+	width: 1000px;
 	height: 100px;
 	margin: 0 auto;
 	position: relative;

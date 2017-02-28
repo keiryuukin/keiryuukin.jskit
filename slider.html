@@ -5,29 +5,42 @@
 	<meta charset="UTF-8">
 	<title>Document</title>
 	<link rel="stylesheet" href="css/slider.css">
-	<script src="https://code.jquery.com/jquery-3.1.1.js?v=20161222"></script>
+	<!-- <script src="https://code.jquery.com/jquery-2.1.4.js"></script> -->
+	<script src="https://code.jquery.com/jquery-3.1.1.js"></script>
 	<script src="js/slider.js"></script>
+	<script>
+	$(function() {
+
+		$(".slider").each(function() {
+			$(this).slider({
+				type: "sliding",
+				thumb: true,
+				pager: true
+			});
+		});
+		$('.slider a').on("dragstart", function(e) {
+			e.preventDefault();
+		})
+	})
+	</script>
 </head>
 
 <body>
-	<div class="slider aa">
+	<!-- <div class="slider aa">
 		<div class="frame">
 			<ul class="slides">
-				<li id="te" class="R">0</li>
-				<li class="G">1</li>
-				<li class="B">2</li>
-				<li class="C">3</li>
-				<li class="M">4</li>
+				<li class="R"><a href="#"><img src="img/1.jpg" alt=""></a></li>
+				<li class="G"><a href="#"><img src="img/2.jpg" alt=""></a></li>
+				<li class="B"><a href="#"><img src="img/3.jpg" alt=""></a></li>
+				<li class="C"><a href="#"><img src="img/4.jpg" alt=""></a></li>
+				<li class="M"><a href="#"><img src="img/5.jpg" alt=""></a></li>
+				<li class="M"><a href="#"><img src="img/6.jpg" alt=""></a></li>
 			</ul>
+			<img src="img/1.jpg" alt="">
 		</div>
-		<!-- <div class="slide-nav">
-			<a class="slide-prev" href="#">&lt;</a>
-			<a class="slide-next" href="#">&gt;</a>
-			<div class="pager"></div>
-		</div> -->
 		<div class="slider-nav"></div>
 		
-	</div>
+	</div> -->
 	<div class="slider aa">
 		<div class="frame">
 			<ul class="slides">
@@ -39,11 +52,18 @@
 			</ul>
 		</div>
 		<div class="slider-nav"></div>
-		<!-- <div class="slide-nav">
-			<a class="slide-prev" href="#">&lt;</a>
-			<a class="slide-next" href="#">&gt;</a>
-			<div class="pager"></div>
-		</div> -->
+	</div>
+	<div class="slider bb">
+		<div class="frame">
+			<ul class="slides">
+				<li id="te" class="R">0</li>
+				<li class="G">1</li>
+				<li class="B">2</li>
+				<li class="C">3</li>
+				<li class="M">4</li>
+			</ul>
+		</div>
+		<div class="slider-nav"></div>
 	</div>
 </body>
 

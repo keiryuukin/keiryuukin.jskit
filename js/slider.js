@@ -19,7 +19,7 @@ $.fn.extend({
 			liWidth = $li.width();
 			liLength = $li.length - 3;
 			slider.reposition();
-			slider.buildNav();
+			//slider.buildNav();
 
 		})
 
@@ -72,10 +72,7 @@ $.fn.extend({
 		Slider.prototype.buildNav = function() {
 			$active = $li.filter(".active");
 			activeIndex = $active.data("index");
-			var listHtml = "";
-			for (var i = 0; i < liLength; i++) {
-				listHtml += "<a></a>"
-			}
+
 			var $nav = $("<div>");
 			$nav.append(
 				$("<a>").addClass("slide-prev").attr("href", "#").html("&lt;")
@@ -83,6 +80,10 @@ $.fn.extend({
 				$("<a>").addClass("slide-next").attr("href", "#").html("&gt;")
 			)
 			if (this.pager !== false) {
+				var listHtml = "";
+				for (var i = 0; i < liLength; i++) {
+					listHtml += "<a></a>"
+				}
 				$nav.append(
 					$("<div>").addClass("pager").append(listHtml)
 				);
@@ -93,7 +94,10 @@ $.fn.extend({
 
 		}
 		Slider.prototype.change = function(obj) {
-
+			var dragging;
+			if(obj.e.type === "mouseup" || obj.e.type === "touchend"){
+				dragging = true;
+			}
 			function sliding(obj) {
 				var animating = $ul.is(":animated");
 				if (!animating) {
@@ -113,20 +117,20 @@ $.fn.extend({
 						if (targetIndex == liLength) {
 							targetIndex = 0;
 						}
-						if (activeIndex == 0 && $active.data("copy")) {
+						if (activeIndex == 0 && $active.data("copy") && !dragging) {
 							$ul.css("left", 0)
 						}
 					} else if (obj.direction == "prev") {
+						console.log(obj.e.type)
 						targetIndex = activeIndex - 1;
 						$targetSlide = $li.eq(targetIndex + 1);
 						if (targetIndex < 0) {
 							targetIndex = liLength - 1;
 							$targetSlide = $li.eq(targetIndex + 1);
 						}
-						if (activeIndex == 0) {
-							// index = liLength + 1;
+						if (activeIndex == 0 && !dragging) {
+							console.log("aaa")
 							$ul.css("left", -(liWidth * liLength))
-								// $prevSlide = $li.eq(index - 1);
 						}
 					} else if (obj.direction == "pager") {
 						targetIndex = obj.$this.index();
@@ -157,9 +161,13 @@ $.fn.extend({
 
 			$ul.on("touchstart touchmove touchend mousedown mousemove mouseup", function(e) {
 				var posX = $(this).offset().left; //position of target left win window;
+
 				//console.log(posX+"posX")
 
 				if (e.type == "touchstart" || e.type == "mousedown") {
+					$active = $li.filter(".active");
+					activeIndex = $active.data("index");
+					console.log(activeIndex)
 					holding = true;
 					if (e.type == "touchstart") {
 						cursorX = e.targetTouches[0].pageX;
@@ -181,7 +189,7 @@ $.fn.extend({
 						if (dragged >= 1 || dragged <= -(1)) {
 							dragging = true;
 						}
-						if(dragging){
+						if (dragging) {
 							e.preventDefault()
 
 						}
@@ -208,22 +216,30 @@ $.fn.extend({
 							startPos = cursorX - posX;
 						}
 						targeteq = -(parseInt((currentPos - liWidth / 2) / liWidth));
+						// console.log(targeteq)
 
 
 					}
 				}
 				if (e.type == "touchend" || e.type == "mouseup") {
+
+					var movedeq = Math.abs(targeteq - activeIndex);
+					if (movedeq === liLength) { movedeq = 0 }
+
+					console.log(movedeq)
 					holding = false;
 					dragging = false;
 					// console.log("lastMove: " + lastMove + " movedPos: " +movedPos);
 					clearTimeout(holdingTime);
 					// console.log("longHold: " + longHold)
-					if (longHold != true && dragged > liWidth / 10) {
+					if (longHold != true && dragged > liWidth / 10 && movedeq < 1) {
+						console.log("next")
 						slider.change({
 							e: e,
 							direction: "next"
 						});
-					} else if (longHold != true && dragged < -(liWidth / 10)) {
+					} else if (longHold != true && dragged < -(liWidth / 10)/* && movedeq < 1*/) {
+						console.log("prev")
 						slider.change({
 							e: e,
 							direction: "prev"
@@ -234,7 +250,7 @@ $.fn.extend({
 						target.addClass("active")
 						var newPos = parseInt(target.css("left"));
 
-						$ul.animate({ "left": -newPos }, aniSpeed)
+						$ul.animate({ "left": -newPos }, aniSpeed);
 					}
 					longHold = false;
 
@@ -275,13 +291,15 @@ $.fn.extend({
 
 		$sliderNav.on("click", "a", function(e) {
 			e.preventDefault();
-			var $this = $(this)
+			var $this = $(this);
 			if ($(this).hasClass("slide-next") > 0) {
 				slider.change({
+					e:e,
 					direction: "next"
 				});
 			} else if ($(this).hasClass("slide-prev") > 0) {
 				slider.change({
+					e:e,
 					direction: "prev"
 				});
 			} else {

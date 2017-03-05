@@ -16,9 +16,9 @@ a {
 	width: 100%;	
 }
 .slider .frame {
-	max-width: 600px;
+	max-width: 710px;
 	width: 100%;
-	min-height: 100px;
+	min-height: 310px;
 	margin: 0 auto;
 	position: relative;
 	/*border: 1px solid black;*/

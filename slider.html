@@ -13,47 +13,33 @@
 
 		$(".slider").each(function() {
 			$(this).slider({
-				type: "sliding",
+				type: "slide",
 				thumb: true,
 				pager: true
 			});
 		});
-		$('.slider a').on("dragstart", function(e) {
-			e.preventDefault();
-		})
+		
+		// $.getJSON
 	})
 	</script>
 </head>
 
 <body>
-	<!-- <div class="slider aa">
-		<div class="frame">
-			<ul class="slides">
-				<li><a href="#"><img src="img/1.jpg" title="title" alt="alt1"></a></li>
-				<li><a href="#"><img src="img/2.jpg" alt="alt2"></a></li>
-				<li><a href="#"><img src="img/3.jpg" alt="alt3"></a></li>
-				<li><a href="#"><img src="img/4.jpg" alt="alt4"></a></li>
-				<li><a href="#"><img src="img/5.jpg" alt="alt5"></a></li>
-				<li><a href="#"><img src="img/6.jpg" alt="alt6"></a></li>
-			</ul>
-			<img src="img/1.jpg" alt="">
-		</div>
-		<div class="slider-nav"></div>
-		
-	</div> -->
 	<div class="slider aa">
 		<div class="frame">
 			<ul class="slides">
-				<li id="te" class="R">0</li>
-				<li class="G">1</li>
-				<li class="B">2</li>
-				<li class="C">3</li>
-				<li class="M">4</li>
+				<li><a href="#"><img src="http://fakeimg.pl/1600x800/bfefff?text=1st" title="title" alt="alt1"></a></li>
+				<li><a href="#"><img src="http://fakeimg.pl/1600x800/bfffe5?text=2nd" title="title" alt="alt2"></a></li>
+				<li><a href="#"><img src="http://fakeimg.pl/1600x800/c8bfff?text=3rd" title="title" alt="alt3"></a></li>
+				<li><a href="#"><img src="http://fakeimg.pl/1600x800/ffbfbf?text=4th" title="title" alt="alt4"></a></li>
+				<li><a href="#"><img src="http://fakeimg.pl/1600x800/faffbf?text=5th" title="title" alt="alt5"></a></li>
+				<li><a href="#"><img src="http://fakeimg.pl/1600x800/ffe3bf?text=6th" title="title" alt="alt6"></a></li>
 			</ul>
+			<img src="http://fakeimg.pl/1600x800/bfefff?text=1st" title="title" alt="alt1">
 		</div>
 		<div class="slider-nav"></div>
 	</div>
-	<div class="slider bb">
+	<!-- <div class="slider aa">
 		<div class="frame">
 			<ul class="slides">
 				<li id="te" class="R">0</li>
@@ -64,7 +50,19 @@
 			</ul>
 		</div>
 		<div class="slider-nav"></div>
-	</div>
+	</div> -->
+	<!-- <div class="slider bb">
+		<div class="frame">
+			<ul class="slides">
+				<li id="te" class="R">0</li>
+				<li class="G">1</li>
+				<li class="B">2</li>
+				<li class="C">3</li>
+				<li class="M">4</li>
+			</ul>
+		</div>
+		<div class="slider-nav"></div>
+	</div> -->
 </body>
 
 </html>

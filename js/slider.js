@@ -8,8 +8,9 @@ $.fn.extend({
 		var liLength = $li.length;
 		var $next = $(".slide-next", that);
 		var $prev = $(".slide-prev", that);
-		var $active;
-		var activeIndex;
+		var $active,
+			activeIndex,
+			targetIndex;
 		var $sliderNav = $(".slider-nav", that);
 		var aniSpeed = 300;
 		$(window).resize(function() {
@@ -95,15 +96,16 @@ $.fn.extend({
 		}
 		Slider.prototype.change = function(obj) {
 			var dragging;
-			if(obj.e.type === "mouseup" || obj.e.type === "touchend"){
+			if (obj.e.type === "mouseup" || obj.e.type === "touchend") {
 				dragging = true;
 			}
+
 			function sliding(obj) {
 				var animating = $ul.is(":animated");
 				if (!animating) {
 					$active = $li.filter(".active");
 					activeIndex = $active.data("index");
-					var targetIndex;
+
 					var index = $active.index();
 					var $prevSlide = $li.eq(index - 1);
 					var $targetSlide;
@@ -138,8 +140,10 @@ $.fn.extend({
 					}
 					movingPos = -(parseInt($targetSlide.css("left")));
 					$targetSlide.addClass("active");
-					$sliderNav.find(".pager>a").eq(targetIndex).addClass("active");
-					$ul.animate({ "left": movingPos }, aniSpeed, function() {});
+					$sliderNav.find(".pager>a").eq(targetIndex).addClass("active"); //active pager
+					$ul.animate({
+						"left": movingPos
+					}, aniSpeed, function() {});
 				}
 			}
 			sliding(obj);
@@ -154,15 +158,14 @@ $.fn.extend({
 				cursorX,
 				cursorStartX,
 				holdingTime,
-				longHold,
-				targeteq, //indicate which index of slide will be shown after touch/mouse button released
+				longHold, //indicate which index of slide will be shown after touch/mouse button released
 				scrolling,
 				dragging;
 
-			$ul.on("touchstart touchmove touchend mousedown mousemove mouseup", function(e) {
+			$ul.on("touchstart touchmove touchend mousedown mousemove mouseup mouseout", function(e) {
 				var posX = $(this).offset().left; //position of target left win window;
 
-				//console.log(posX+"posX")
+				console.log(e.type+"e.type")
 
 				if (e.type == "touchstart" || e.type == "mousedown") {
 					$active = $li.filter(".active");
@@ -206,54 +209,64 @@ $.fn.extend({
 						currentPos = parseInt($(this).css("left"));
 						touchingPos = cursorX - posX; //touching left position of the ul;
 						currentPos += touchingPos - startPos;
-						$(this).css({ "left": currentPos }); //start moving the slide
+						$(this).css({
+							"left": currentPos
+						}); //start moving the slide
 						if (currentPos > 0) { //first element 
-							$(this).css({ "left": -(liWidth * liLength) })
+							$(this).css({
+								"left": -(liWidth * liLength)
+							})
 							startPos = cursorX - posX;
 						}
 						if (currentPos < -(liWidth * liLength)) { //last element
-							$(this).css({ "left": 0 });
+							$(this).css({
+								"left": 0
+							});
 							startPos = cursorX - posX;
 						}
-						targeteq = -(parseInt((currentPos - liWidth / 2) / liWidth));
-						// console.log(targeteq)
+						targetIndex = -(parseInt((currentPos - liWidth / 2) / liWidth));
+						// console.log(targetIndex)
 
 
 					}
 				}
 				if (e.type == "touchend" || e.type == "mouseup") {
+					console.log(targetIndex)
+					var movedeq = Math.abs(targetIndex - activeIndex);
+					if (movedeq === liLength) {
+						movedeq = 0
+					}
 
-					var movedeq = Math.abs(targeteq - activeIndex);
-					if (movedeq === liLength) { movedeq = 0 }
-
-					console.log(movedeq)
 					holding = false;
 					dragging = false;
 					// console.log("lastMove: " + lastMove + " movedPos: " +movedPos);
 					clearTimeout(holdingTime);
-					// console.log("longHold: " + longHold)
 					if (longHold != true && dragged > liWidth / 10 && movedeq < 1) {
 						console.log("next")
 						slider.change({
 							e: e,
 							direction: "next"
 						});
-					} else if (longHold != true && dragged < -(liWidth / 10)/* && movedeq < 1*/) {
+					} else if (longHold != true && dragged < -(liWidth / 10)  && movedeq < 1 ) {
 						console.log("prev")
 						slider.change({
 							e: e,
 							direction: "prev"
 						})
 					} else {
-						var target = $ul.find("li").eq(targeteq + 1);
-						$active.removeClass("active");
-						target.addClass("active")
+						var target = $ul.find("li").eq(targetIndex + 1);
+						$(".active", that).removeClass("active");
+						target.addClass("active");
+						targetIndex = targetIndex == liLength ? 0 : targetIndex;
+						$sliderNav.find(".pager>a").eq(targetIndex).addClass("active"); //active pager
 						var newPos = parseInt(target.css("left"));
-
-						$ul.animate({ "left": -newPos }, aniSpeed);
+						$ul.animate({
+							"left": -newPos
+						}, aniSpeed);
 					}
-					longHold = false;
 
+
+					longHold = false;
 
 
 
@@ -275,7 +288,6 @@ $.fn.extend({
 
 
 
-
 					break;
 				case "adv":
 
@@ -294,12 +306,12 @@ $.fn.extend({
 			var $this = $(this);
 			if ($(this).hasClass("slide-next") > 0) {
 				slider.change({
-					e:e,
+					e: e,
 					direction: "next"
 				});
 			} else if ($(this).hasClass("slide-prev") > 0) {
 				slider.change({
-					e:e,
+					e: e,
 					direction: "prev"
 				});
 			} else {
@@ -310,10 +322,13 @@ $.fn.extend({
 			}
 
 		})
-
+		/*$("a", that).on("dragstart",function(e){
+			e.preventDefault();
+		})*/
 		/*$(".pager>a",$sliderNav).click(function(e){
 			e.preventDefault();
 			var index = $(this).index();
 		})*/
 	}
-})
+});
+

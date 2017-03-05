@@ -1,36 +1,12 @@
 $.fn.extend({
 	slider: function(obj) {
-		$.getJSON("inc/" + obj.src, function(data) {
-			var html = "";
-			var dataLength = data.length;
-			html += "<div class=\"frame\">";
-			html += "<ul>";
-			for(var i = 0; i < data.length; i++){
-				html += "<li>";
-				html += "<a href=\"" + data[i]["url"] + "\">";
-				html += "<img src=\"" + data[i]["src"] + "\" alt=\"" + data[i]["title"] + "\"/>"
-				html += "</a>";
-				html += "</li>";
-			}
-			html += "</ul>";
-			html += "</div><div class=\"slider-nav\"></div>";
-			console.log(html)
-			that.append(html)
-
-			var $ul = $("ul",that);
-			$ul.addClass("slides")
-
-			
-		});
+		
 		var that = $(this);
 		var $frame = $(".frame", that);
 		var $ul = $(".slides", that);
 		var $li = $(".slides>li", that);
 		var liWidth = $li.width();
 		var liLength = $li.length;
-		console.log(liLength)
-		var $next = $(".slide-next", that);
-		var $prev = $(".slide-prev", that);
 		var $active,
 			activeIndex,
 			targetIndex;
@@ -54,14 +30,48 @@ $.fn.extend({
 
 		}
 		var slider = new Slider(obj);
+		Slider.prototype.buildHtml = function(){
+			$.getJSON("inc/" + obj.src, function(data) {
+				var html = "";
+				var dataLength = data.length;
+				html += "<div class=\"frame\">";
+				html += "<ul>";
+				for(var i = 0; i < data.length; i++){
+					html += "<li>";
+					html += "<a href=\"" + data[i]["url"] + "\">";
+					html += "<img src=\"" + data[i]["src"] + "\" alt=\"" + data[i]["title"] + "\"/>"
+					html += "</a>";
+					html += "</li>";
+				}
+				html += "</ul>";
+				html += "</div><div class=\"slider-nav\"></div>";
+				console.log(html)
+				that.append(html)
 
+				$ul = $("ul",that);
+				$ul.addClass("slides")
+				$frame = $(".frame", that);
+				$ul = $(".slides", that);
+				$li = $(".slides>li", that);
+				liWidth = $li.width();
+				liLength = $li.length;
+				$sliderNav = $(".slider-nav", that);
+				// $sliderNav.addClass("success")
+				var count = 0;
+				$li.each(function() {
+					$(this).attr("data-index", count);
+					count++;
+				})
+				$li.eq(0).addClass("active");
+			});
+		}
 		Slider.prototype.duplicate = function() {
 
 			var firstLi = $li.eq(0);
 			var secondLi = $li.eq(1);
 			var lastLi = $li.filter(":last-child");
 
-			/*function createHtml(selector) {
+			function createHtml(selector) {
 				var target = selector;
 				var liCode = "<li ";
 				var targetHtml = target.html();
@@ -79,7 +89,7 @@ $.fn.extend({
 			}
 			$ul.append(createHtml(firstLi));
 			$ul.append(createHtml(secondLi));
-			$ul.prepend(createHtml(lastLi))*/
+			$ul.prepend(createHtml(lastLi))
 
 			$li = $(".slides li", that);
 		};
@@ -187,7 +197,7 @@ $.fn.extend({
 
 			$ul.on("touchstart touchmove touchend mousedown mousemove mouseup mouseout", function(e) {
 				var posX = $(this).offset().left; //position of target left win window;
-
+				e.preventDefault()
 				console.log(e.type + "e.type")
 
 				if (e.type == "touchstart" || e.type == "mousedown") {
@@ -297,13 +307,8 @@ $.fn.extend({
 			})
 		}
 		Slider.prototype.init = function() {
+			slider.buildHtml();
 			
-			var count = 0;
-			$li.each(function() {
-				$(this).attr("data-index", count);
-				count++;
-			})
-			$li.eq(0).addClass("active");
 			switch (this.type) {
 				case "fade":
 
@@ -317,35 +322,42 @@ $.fn.extend({
 
 					break;
 				default:
-					slider.duplicate();
-					slider.buildNav();
-					slider.reposition();
-					slider.drag();
+					
+					setTimeout(function(){
+						slider.duplicate();
+						slider.buildNav();
+						slider.reposition();
+						slider.drag();
+						$sliderNav.on("click", "a", function(e) {
+
+								e.preventDefault();
+								var $this = $(this);
+								if ($(this).hasClass("slide-next") > 0) {
+
+									slider.change({
+										e: e,
+										direction: "next"
+									});
+								} else if ($(this).hasClass("slide-prev") > 0) {
+									slider.change({
+										e: e,
+										direction: "prev"
+									});
+								} else {
+									slider.change({
+										$this: $this,
+										direction: "pager"
+									});
+								}
+
+							})
+					},1000)
+					
 			}
 		}
 		slider.init();
 
-		$sliderNav.on("click", "a", function(e) {
-				e.preventDefault();
-				var $this = $(this);
-				if ($(this).hasClass("slide-next") > 0) {
-					slider.change({
-						e: e,
-						direction: "next"
-					});
-				} else if ($(this).hasClass("slide-prev") > 0) {
-					slider.change({
-						e: e,
-						direction: "prev"
-					});
-				} else {
-					slider.change({
-						$this: $this,
-						direction: "pager"
-					});
-				}
-
-			})
+		
 			/*$("a", that).on("dragstart",function(e){
 				e.preventDefault();
 			})*/

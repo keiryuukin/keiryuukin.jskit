@@ -1,11 +1,34 @@
 $.fn.extend({
 	slider: function(obj) {
+		$.getJSON("inc/" + obj.src, function(data) {
+			var html = "";
+			var dataLength = data.length;
+			html += "<div class=\"frame\">";
+			html += "<ul>";
+			for(var i = 0; i < data.length; i++){
+				html += "<li>";
+				html += "<a href=\"" + data[i]["url"] + "\">";
+				html += "<img src=\"" + data[i]["src"] + "\" alt=\"" + data[i]["title"] + "\"/>"
+				html += "</a>";
+				html += "</li>";
+			}
+			html += "</ul>";
+			html += "</div><div class=\"slider-nav\"></div>";
+			console.log(html)
+			that.append(html)
+
+			var $ul = $("ul",that);
+			$ul.addClass("slides")
+
+			
+		});
 		var that = $(this);
 		var $frame = $(".frame", that);
 		var $ul = $(".slides", that);
 		var $li = $(".slides>li", that);
 		var liWidth = $li.width();
 		var liLength = $li.length;
+		console.log(liLength)
 		var $next = $(".slide-next", that);
 		var $prev = $(".slide-prev", that);
 		var $active,
@@ -38,7 +61,7 @@ $.fn.extend({
 			var secondLi = $li.eq(1);
 			var lastLi = $li.filter(":last-child");
 
-			function createHtml(selector) {
+			/*function createHtml(selector) {
 				var target = selector;
 				var liCode = "<li ";
 				var targetHtml = target.html();
@@ -56,7 +79,7 @@ $.fn.extend({
 			}
 			$ul.append(createHtml(firstLi));
 			$ul.append(createHtml(secondLi));
-			$ul.prepend(createHtml(lastLi))
+			$ul.prepend(createHtml(lastLi))*/
 
 			$li = $(".slides li", that);
 		};
@@ -165,7 +188,7 @@ $.fn.extend({
 			$ul.on("touchstart touchmove touchend mousedown mousemove mouseup mouseout", function(e) {
 				var posX = $(this).offset().left; //position of target left win window;
 
-				console.log(e.type+"e.type")
+				console.log(e.type + "e.type")
 
 				if (e.type == "touchstart" || e.type == "mousedown") {
 					$active = $li.filter(".active");
@@ -247,7 +270,7 @@ $.fn.extend({
 							e: e,
 							direction: "next"
 						});
-					} else if (longHold != true && dragged < -(liWidth / 10)  && movedeq < 1 ) {
+					} else if (longHold != true && dragged < -(liWidth / 10) && movedeq < 1) {
 						console.log("prev")
 						slider.change({
 							e: e,
@@ -274,6 +297,7 @@ $.fn.extend({
 			})
 		}
 		Slider.prototype.init = function() {
+			
 			var count = 0;
 			$li.each(function() {
 				$(this).attr("data-index", count);
@@ -302,33 +326,39 @@ $.fn.extend({
 		slider.init();
 
 		$sliderNav.on("click", "a", function(e) {
-			e.preventDefault();
-			var $this = $(this);
-			if ($(this).hasClass("slide-next") > 0) {
-				slider.change({
-					e: e,
-					direction: "next"
-				});
-			} else if ($(this).hasClass("slide-prev") > 0) {
-				slider.change({
-					e: e,
-					direction: "prev"
-				});
-			} else {
-				slider.change({
-					$this: $this,
-					direction: "pager"
-				});
-			}
+				e.preventDefault();
+				var $this = $(this);
+				if ($(this).hasClass("slide-next") > 0) {
+					slider.change({
+						e: e,
+						direction: "next"
+					});
+				} else if ($(this).hasClass("slide-prev") > 0) {
+					slider.change({
+						e: e,
+						direction: "prev"
+					});
+				} else {
+					slider.change({
+						$this: $this,
+						direction: "pager"
+					});
+				}
 
-		})
-		/*$("a", that).on("dragstart",function(e){
-			e.preventDefault();
-		})*/
-		/*$(".pager>a",$sliderNav).click(function(e){
-			e.preventDefault();
-			var index = $(this).index();
-		})*/
+			})
+			/*$("a", that).on("dragstart",function(e){
+				e.preventDefault();
+			})*/
+			/*$(".pager>a",$sliderNav).click(function(e){
+				e.preventDefault();
+				var index = $(this).index();
+			})*/
 	}
 });
+$(function() {
 
+
+
+
+
+})

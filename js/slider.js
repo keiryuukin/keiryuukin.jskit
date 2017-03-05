@@ -316,6 +316,7 @@ $.fn.extend({
 				});
 			} else {
 				slider.change({
+					e: e,
 					$this: $this,
 					direction: "pager"
 				});

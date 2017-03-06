@@ -1,6 +1,6 @@
 $.fn.extend({
 	slider: function(obj) {
-		
+
 		var that = $(this);
 		var $frame = $(".frame", that);
 		var $ul = $(".slides", that);
@@ -30,13 +30,14 @@ $.fn.extend({
 
 		}
 		var slider = new Slider(obj);
-		Slider.prototype.buildHtml = function(){
+
+		Slider.prototype.buildHtml = function() {
 			$.getJSON("inc/" + obj.src, function(data) {
 				var html = "";
 				var dataLength = data.length;
 				html += "<div class=\"frame\">";
 				html += "<ul>";
-				for(var i = 0; i < data.length; i++){
+				for (var i = 0; i < data.length; i++) {
 					html += "<li>";
 					html += "<a href=\"" + data[i]["url"] + "\">";
 					html += "<img src=\"" + data[i]["src"] + "\" alt=\"" + data[i]["title"] + "\"/>"
@@ -44,11 +45,12 @@ $.fn.extend({
 					html += "</li>";
 				}
 				html += "</ul>";
+				html += "<img src=\"" + data[0]["src"] + "\" style=\"opacity: 0;\" />"
 				html += "</div><div class=\"slider-nav\"></div>";
 				console.log(html)
 				that.append(html)
 
-				$ul = $("ul",that);
+				$ul = $("ul", that);
 				$ul.addClass("slides")
 				$frame = $(".frame", that);
 				$ul = $(".slides", that);
@@ -63,8 +65,10 @@ $.fn.extend({
 					count++;
 				})
 				$li.eq(0).addClass("active");
+				slider.init();
 			});
 		}
+		slider.buildHtml();
 		Slider.prototype.duplicate = function() {
 
 			var firstLi = $li.eq(0);
@@ -191,15 +195,18 @@ $.fn.extend({
 				cursorX,
 				cursorStartX,
 				holdingTime,
-				longHold, //indicate which index of slide will be shown after touch/mouse button released
-				scrolling,
+				longHold, 
+				dragged, //dragged pixels
 				dragging;
 
-			$ul.on("touchstart touchmove touchend mousedown mousemove mouseup mouseout", function(e) {
+			$ul.on("click touchstart touchmove touchend mousedown mousemove mouseup mouseout", function(e) {
 				var posX = $(this).offset().left; //position of target left win window;
-				e.preventDefault()
-				console.log(e.type + "e.type")
+				// console.log(e.type)
 
+				if (e.type == "click" && Math.abs(dragged) > 1) {
+					e.preventDefault();
+					console.log(dragged + "dragged")
+				}
 				if (e.type == "touchstart" || e.type == "mousedown") {
 					$active = $li.filter(".active");
 					activeIndex = $active.data("index");
@@ -218,12 +225,14 @@ $.fn.extend({
 					startScrollPos = $(window).scrollTop();
 				}
 				if (e.type == "touchmove" || "mousemove") {
+
 					var currentPos = $(window).scrollTop()
 					if (holding && currentPos == startScrollPos) {
 
-						var dragged = cursorStartX - cursorX;
+						dragged = cursorStartX - cursorX;
 						if (dragged >= 1 || dragged <= -(1)) {
 							dragging = true;
+							e.preventDefault();
 						}
 						if (dragging) {
 							e.preventDefault()
@@ -266,6 +275,7 @@ $.fn.extend({
 				if (e.type == "touchend" || e.type == "mouseup") {
 					console.log(targetIndex)
 					var movedeq = Math.abs(targetIndex - activeIndex);
+					console.log(movedeq)
 					if (movedeq === liLength) {
 						movedeq = 0
 					}
@@ -307,64 +317,61 @@ $.fn.extend({
 			})
 		}
 		Slider.prototype.init = function() {
-			slider.buildHtml();
-			
-			switch (this.type) {
-				case "fade":
+			$sliderNav.on("click", "a", function(e) {
 
-					break;
-				case "basic":
+				e.preventDefault();
+				var $this = $(this);
+				if ($(this).hasClass("slide-next") > 0) {
+
+					slider.change({
+						e: e,
+						direction: "next"
+					});
+				} else if ($(this).hasClass("slide-prev") > 0) {
+					slider.change({
+						e: e,
+						direction: "prev"
+					});
+				} else {
+					slider.change({
+						e: e,
+						$this: $this,
+						direction: "pager"
+					});
+				}
+
+			})
+
+				switch (this.type) {
+					case "fade":
+
+						break;
+					case "basic":
 
 
 
-					break;
-				case "adv":
+						break;
+					case "adv":
 
-					break;
-				default:
-					
-					setTimeout(function(){
+						break;
+					default:
 						slider.duplicate();
 						slider.buildNav();
 						slider.reposition();
 						slider.drag();
-						$sliderNav.on("click", "a", function(e) {
-
-								e.preventDefault();
-								var $this = $(this);
-								if ($(this).hasClass("slide-next") > 0) {
-
-									slider.change({
-										e: e,
-										direction: "next"
-									});
-								} else if ($(this).hasClass("slide-prev") > 0) {
-									slider.change({
-										e: e,
-										direction: "prev"
-									});
-								} else {
-									slider.change({
-										$this: $this,
-										direction: "pager"
-									});
-								}
-
-							})
-					},1000)
-					
+						
+				}
 			}
-		}
-		slider.init();
+			// slider.init();
 
-		
-			/*$("a", that).on("dragstart",function(e){
-				e.preventDefault();
-			})*/
-			/*$(".pager>a",$sliderNav).click(function(e){
-				e.preventDefault();
-				var index = $(this).index();
-			})*/
+
+		/*$("a", that).on("dragstart",function(e){
+			e.preventDefault();
+		})*/
+		/*$(".pager>a",$sliderNav).click(function(e){
+			e.preventDefault();
+			var index = $(this).index();
+		})*/
 	}
 });
 $(function() {

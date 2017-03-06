@@ -1,6 +1,5 @@
 $.fn.extend({
 	slider: function(obj) {
-
 		var that = $(this);
 		var $frame = $(".frame", that);
 		var $ul = $(".slides", that);

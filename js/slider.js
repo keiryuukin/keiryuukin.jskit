@@ -199,7 +199,7 @@ $.fn.extend({
 				dragged, //dragged pixels
 				dragging;
 
-			$ul.on("click touchstart touchmove touchend mousedown mousemove mouseup mouseout", function(e) {
+			$ul.on("click touchstart touchmove touchend mousedown mousemove mouseup", function(e) {
 				var posX = $(this).offset().left; //position of target left win window;
 				// console.log(e.type)
 

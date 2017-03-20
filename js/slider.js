@@ -1,5 +1,6 @@
 $.fn.extend({
 	slider: function(obj) {
+		var jsonData;
 		var that = $(this);
 		var $frame = $(".frame", that);
 		var $ul = $(".slides", that);
@@ -26,6 +27,7 @@ $.fn.extend({
 		function Slider(obj) {
 			this.type = obj.type;
 			this.pager = obj.pager;
+			this.pagerType = obj.pagerType;
 
 		}
 		var slider = new Slider(obj);
@@ -33,6 +35,7 @@ $.fn.extend({
 		Slider.prototype.buildHtml = function() {
 			$.getJSON("inc/" + obj.src, function(data) {
 				var html = "";
+				jsonData = data;
 				var dataLength = data.length;
 				html += "<div class=\"frame\">";
 				html += "<ul>";
@@ -46,7 +49,6 @@ $.fn.extend({
 				html += "</ul>";
 				html += "<img src=\"" + data[0]["src"] + "\" style=\"opacity: 0;\" />"
 				html += "</div><div class=\"slider-nav\"></div>";
-				console.log(html)
 				that.append(html)
 
 				$ul = $("ul", that);
@@ -97,7 +99,6 @@ $.fn.extend({
 			$li = $(".slides li", that);
 		};
 		Slider.prototype.reposition = function() {
-			$active = $li.filter(".active");
 			var pos = -liWidth * 2;
 			$li.each(function() {
 				pos += liWidth;
@@ -109,25 +110,47 @@ $.fn.extend({
 		Slider.prototype.buildNav = function() {
 			$active = $li.filter(".active");
 			activeIndex = $active.data("index");
-
-			var $nav = $("<div>");
-			$nav.append(
+			var $navHtml = $("<div>");
+			$navHtml.append(
 				$("<a>").addClass("slide-prev").attr("href", "#").html("&lt;")
 			).append(
 				$("<a>").addClass("slide-next").attr("href", "#").html("&gt;")
-			)
+			);
 			if (this.pager !== false) {
-				var listHtml = "";
-				for (var i = 0; i < liLength; i++) {
-					listHtml += "<a></a>"
+				var listHtml = $("<ul>").addClass("clearfix");
+				switch (this.pagerType) {
+					case "text":
+						var title;
+						var desc;
+						for (var i = 0; i < liLength; i++) {
+							title = jsonData[i]["title"];
+							desc = jsonData[i]["desc"];
+							listHtml.append(
+								$("<li>").append(
+									$("<h3>").append(title)
+								).append(
+									$("<p>").append(desc)
+								)
+							)
+						}
+						break;
+					case "thumb":
+
+						break;
+					default:
+						pagerHtml = "<li><a></a></li>";
+						for (var i = 0; i < liLength; i++) {
+							listHtml.append("<li><a></a></li>");
+						}
 				}
-				$nav.append(
+
+				$navHtml.append(
 					$("<div>").addClass("pager").append(listHtml)
 				);
 			}
 
-			$sliderNav.html($nav.html());
-			$sliderNav.find(".pager>a").eq(activeIndex).addClass("active");
+			$sliderNav.html($navHtml.html());
+			$sliderNav.find(".pager li").eq(0).addClass("active");
 
 		}
 		Slider.prototype.change = function(obj) {
@@ -171,12 +194,13 @@ $.fn.extend({
 							$ul.css("left", -(liWidth * liLength))
 						}
 					} else if (obj.direction == "pager") {
-						targetIndex = obj.$this.index();
+						console.log(obj.$this.parent().index());
+						targetIndex = obj.$this.parent().index();
 						$targetSlide = $li.eq(targetIndex + 1);
 					}
 					movingPos = -(parseInt($targetSlide.css("left")));
 					$targetSlide.addClass("active");
-					$sliderNav.find(".pager>a").eq(targetIndex).addClass("active"); //active pager
+					$sliderNav.find(".pager li").eq(targetIndex).addClass("active"); //active pager
 					$ul.animate({
 						"left": movingPos
 					}, aniSpeed, function() {});
@@ -194,7 +218,7 @@ $.fn.extend({
 				cursorX,
 				cursorStartX,
 				holdingTime,
-				longHold, 
+				longHold,
 				dragged, //dragged pixels
 				dragging;
 
@@ -316,30 +340,30 @@ $.fn.extend({
 			})
 		}
 		Slider.prototype.init = function() {
-			$sliderNav.on("click", "a", function(e) {
+				$sliderNav.on("click", "a", function(e) {
 
-				e.preventDefault();
-				var $this = $(this);
-				if ($(this).hasClass("slide-next") > 0) {
+					e.preventDefault();
+					var $this = $(this);
+					if ($(this).hasClass("slide-next") > 0) {
 
-					slider.change({
-						e: e,
-						direction: "next"
-					});
-				} else if ($(this).hasClass("slide-prev") > 0) {
-					slider.change({
-						e: e,
-						direction: "prev"
-					});
-				} else {
-					slider.change({
-						e: e,
-						$this: $this,
-						direction: "pager"
-					});
-				}
+						slider.change({
+							e: e,
+							direction: "next"
+						});
+					} else if ($(this).hasClass("slide-prev") > 0) {
+						slider.change({
+							e: e,
+							direction: "prev"
+						});
+					} else {
+						slider.change({
+							e: e,
+							$this: $this,
+							direction: "pager"
+						});
+					}
 
-			})
+				})
 
 				switch (this.type) {
 					case "fade":
@@ -358,7 +382,7 @@ $.fn.extend({
 						slider.buildNav();
 						slider.reposition();
 						slider.drag();
-						
+
 				}
 			}
 			// slider.init();

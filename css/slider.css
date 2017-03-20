@@ -58,8 +58,10 @@ a {
 	display: inline-block;
 	font-size: 36px;
 }
-
-.pager a {
+.pager li{
+	display: inline-block;
+}
+.pager li a {
 	width: 20px;
 	height: 20px;
 	background-color: yellow;
@@ -68,7 +70,7 @@ a {
 	cursor: pointer;
 }
 
-.pager a.active {
+.pager li.active a {
 	background-color: black;
 }
 

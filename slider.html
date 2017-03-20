@@ -6,8 +6,8 @@
 	<title>Document</title>
 	<link rel="stylesheet" href="css/reset.css">
 	<link rel="stylesheet" href="css/slider.css">
-	<!-- <script src="https://code.jquery.com/jquery-2.1.4.js"></script> -->
-	<script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+	<script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+	<!-- <script src="https://code.jquery.com/jquery-3.1.1.js"></script> -->
 	<script src="js/slider.js"></script>
 	<script>
 	$(function() {
@@ -16,7 +16,9 @@
 			src: "slider.json",
 			type: "slide",
 			thumb: true,
-			pager: true
+			pager: true,
+			pagerType: "teaxt"
+
 		});
 		$(".slider").on("dragstart","a img",function(e){
 			e.preventDefault();

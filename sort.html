@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        .sorting{
+            background-color: yellow;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript">
+    $.fn.extend({
+        beforeAll: function() {
+            var $this = $(this);
+            var $parent = $this.parent();
+            var $all = $parent.find(">*");
+            var $after = $this.find("~*");
+            var $target = $all.not($after).not($this);
+            return $target;
+        },
+        sortElement: function() {
+            console.log("HH")
+            var $parent = $(this).parent();
+            var len = $(this).length - 1;
+            console.log(len)
+            for (i = len; i > -1; i--) {
+                console.log(len)
+
+                var $target = $("[data-id=\"" + i + "\"]", $parent);
+                $target.prependTo($parent);
+            }
+        }
+    })
+    $(function() {
+
+        // $(".item-list").sortElement();
+        $("body").click(function() {
+            console.time("sort");
+            sort1($(".total2 .item-list"));
+            console.timeEnd("sort")
+        })
+        var times = 0;
+        function sort1(t) {
+            var $target = t;
+            var len = $target.length;
+            $target.each(function(i) {
+                var $this = $(this);
+
+                var $parent = $this.parent();
+                var max = len;
+                console.log(len)
+                var min = 0;
+                console.log($target.eq(max).data("id"))
+                var id = $(this).data("id");
+                var nextId = id + 1;
+                $next = $("li[data-id=\"" + nextId + "\"]", $parent);
+                if (id == max) {
+                    $(this).insertAfter($target.eq(max));
+                } else if (id == min) {
+                    $(this).prependTo(".total2>ul");
+                } else {
+                    $(this).insertBefore($next);
+                };
+            });
+            $target.each(function() {
+            if ($(this).data("id") > $(this).next().data("id")) {
+                console.log(times++);
+                $(this).addClass("sorting");
+                $(".sorting").beforeAll().addClass("GG")
+                // sort1($(".sorting").beforeAll());
+            } else {
+                $(this).removeClass("sorting")
+            }
+
+        })
+        }
+        
+    })
+    </script>
+</head>
+
+<body>
+    <div class="total">
+        <ul>
+            <li class="item-list clearfix" data-id="9">9</li>ok
+            <li class="item-list clearfix" data-id="11">11</li>ok
+            <li class="item-list clearfix" data-id="6">6</li>
+            <li class="item-list clearfix" data-id="3">3</li>
+            <li class="item-list clearfix" data-id="5">5</li>
+            <li class="item-list clearfix" data-id="1">1</li>
+            <li class="item-list clearfix" data-id="0">0</li>
+            <li class="item-list clearfix" data-id="10">10</li>
+            <li class="item-list clearfix" data-id="2">2</li>
+            <li class="item-list clearfix" data-id="4">4</li>
+            <li class="item-list clearfix" data-id="7">7</li>
+            <li class="item-list clearfix" data-id="8">8</li>
+            <li class="item-list clearfix" data-id="12">12</li>
+            <li class="bonus" style="display: list-item;"><span class="title">紅利點數：</span><span class="digit"><input class="bonus"></span></li>
+            <li class="total-price"><span class="title">金額總計：</span><span class="digit">$21000</span></li>
+        </ul>
+    </div>
+    <div class="total2">
+        <ul>
+            <li class="item-list clearfix" data-id="9">9</li>
+            <li class="item-list clearfix" data-id="11">11</li>
+            <li class="item-list clearfix" data-id="6">6</li>
+            <li class="item-list clearfix" data-id="3">3</li>
+            <li class="item-list clearfix" data-id="14">14</li>
+            <li class="item-list clearfix" data-id="5">5</li>
+            <li class="item-list clearfix" data-id="1">1</li>
+            <li class="item-list clearfix" data-id="0">0</li>
+            <li class="item-list clearfix" data-id="13">13</li>
+            <li class="item-list clearfix" data-id="10">10</li>
+            <li class="item-list clearfix" data-id="2">2</li>
+            <li class="item-list clearfix" data-id="4">4</li>
+            <li class="item-list clearfix" data-id="7">7</li>
+            <li class="item-list clearfix" data-id="8">8</li>
+            <li class="item-list clearfix" data-id="12">12</li>
+        </ul>
+    </div>
+</body>
+
+</html>

@@ -54,11 +54,10 @@ $.fn.extend({
 				d = true;
 				return liCode;
 			}
-			$ul.append(createHtml(firstLi));
-			$ul.append(createHtml(secondLi));
-			$ul.prepend(createHtml(lastLi))
+			// $ul.append(createHtml(firstLi));
+			// $ul.prepend(createHtml(lastLi))
 
-			$li = $(".slides li", that);
+			$li = $(".slides>li", that);
 		};
 		Slider.prototype.reposition = function() {
 			$active = $li.filter(".active");
@@ -212,15 +211,15 @@ $.fn.extend({
 						$(this).css({
 							"left": currentPos
 						}); //start moving the slide
-						if (currentPos > 0) { //first element 
+						if (currentPos > 10) { //first element 
 							$(this).css({
-								"left": -(liWidth * liLength)
+								"left": -(liWidth * liLength) +10
 							})
 							startPos = cursorX - posX;
 						}
-						if (currentPos < -(liWidth * liLength)) { //last element
+						if (currentPos < -(liWidth * liLength) - 10) { //last element
 							$(this).css({
-								"left": 0
+								"left": -10
 							});
 							startPos = cursorX - posX;
 						}
@@ -254,7 +253,7 @@ $.fn.extend({
 							direction: "prev"
 						})
 					} else {
-						var target = $ul.find("li").eq(targetIndex + 1);
+						var target = $ul.find(">li").eq(targetIndex + 1);
 						$(".active", that).removeClass("active");
 						target.addClass("active");
 						targetIndex = targetIndex == liLength ? 0 : targetIndex;

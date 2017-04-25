@@ -60,23 +60,16 @@
         });
         $target.each(function() {
             if ($(this).data("id") > $(this).next().data("id")) {
-                $(this).addClass("sorting");
-                
+                $(".sorting").beforeAll().addClass("sorting");
                 console.log("times" + times++);
-                // sort1($(".sortObj"));
+                $(this).addClass("sorting");
+                sort1($(".sortObj"));
                 // sortObj();
             } else {
                 $(this).removeClass("sorting")
             }
 
         })
-        
-        $(".sorting").beforeAll().addClass("sorting");
-        if($(".sortObj").hasClass("sorting")){
-            sort1($(".sorting"))
-        } else {
-            $(".sortObj").removeClass("sortObj")
-        }
 
     }
     $(function() {

@@ -21,13 +21,9 @@
             return $target;
         },
         sortElement: function() {
-            console.log("HH")
             var $parent = $(this).parent();
             var len = $(this).length - 1;
-            console.log(len)
             for (i = len; i > -1; i--) {
-                console.log(len)
-
                 var $target = $("[data-id=\"" + i + "\"]", $parent);
                 $target.prependTo($parent);
             }
@@ -61,7 +57,7 @@
         $target.each(function() {
             if ($(this).data("id") > $(this).next().data("id")) {
                 $(this).addClass("sorting");
-                
+
                 console.log("times" + times++);
                 // sort1($(".sortObj"));
                 // sortObj();
@@ -70,21 +66,59 @@
             }
 
         })
-        
+
         $(".sorting").beforeAll().addClass("sorting");
-        if($(".sortObj").hasClass("sorting")){
+        if ($(".sortObj").hasClass("sorting")) {
             sort1($(".sorting"))
-        } else {
-            $(".sortObj").removeClass("sortObj")
         }
 
+    }
+
+    function bubbleSort(t) {
+
+        var $target = t;
+        var $parent = $target.parent();
+        $target.addClass("bubbleSorting");
+
+        var len = $target.length;
+        var start = -1;
+        var ok = false;
+        function sort() {
+            len--;
+            ok = true
+            for (i = 0; i < len; i++) {
+                var $a = $parent.find(".bubbleSorting").eq(i);
+                var $b = $parent.find(".bubbleSorting").eq(i+1)
+                // console.log(a)
+                var a = $a.data("id");
+                var b = $b.data("id");
+                if(a>b){
+                    ok = false;
+                    $a.insertAfter($b);
+                }
+                
+                // console.log($target.filter("[data-id=\"" + i + "\"]").index())
+            }
+            // console.log(ok)
+            $target = $(".total2 .item-list");
+            if(len>0 && !ok){
+                sort()
+            } else {
+                $target.removeClass("bubbleSorting")
+            }
+            
+            
+        }
+        sort();
+        // $target.each(function(){sort();})
+        
     }
     $(function() {
 
         // $(".item-list").sortElement();
         $("body").click(function() {
             console.time("sort");
-            sort1($(".total2 .item-list"));
+            bubbleSort($(".total2 .item-list"));
             console.timeEnd("sort")
         })
 

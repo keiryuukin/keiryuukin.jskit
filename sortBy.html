@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+    .sorting {
+        background-color: yellow;
+    }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript">
+    $.fn.extend({
+        beforeAll: function() {
+            var $this = $(this);
+            var $parent = $this.parent();
+            var $all = $parent.find(">*");
+            var $after = $this.find("~*");
+            var $target = $all.not($after).not($this);
+            return $target;
+        },
+        sort(by){
+            
+        }
+    })
+
+    var times = 0;
+
+    
+    $(function() {
+
+        // $(".item-list").sortElement();
+        $("body").click(function() {
+            console.time("sort");
+            sort1($(".total2 .item-list"));
+            console.timeEnd("sort")
+        })
+        var item = [];
+        $(".item-list").each(function(){
+            item.push($(this))
+        })
+        console.log(item)
+        item[1].addClass("GG")
+    })
+    </script>
+</head>
+
+<body>
+    
+    <div class="total2">
+        <ul>
+            <li class="item-list clearfix" data-id="9">9</li>
+            <li class="item-list clearfix" data-id="11">11</li>
+            <li class="item-list clearfix" data-id="6">6</li>
+            <li class="item-list clearfix" data-id="3">3</li>
+            <li class="item-list clearfix" data-id="15">15</li>
+            <li class="item-list clearfix" data-id="14">14</li>
+            <li class="item-list clearfix" data-id="0">0</li>
+            <li class="item-list clearfix" data-id="5">5</li>
+            <li class="item-list clearfix" data-id="16">16</li>
+            <li class="item-list clearfix" data-id="1">1</li>
+            <li class="item-list clearfix" data-id="13">13</li>
+            <li class="item-list clearfix" data-id="18">18</li>
+            <li class="item-list clearfix" data-id="10">10</li>
+            <li class="item-list clearfix" data-id="2">2</li>
+            <li class="item-list clearfix" data-id="17">17</li>
+            <li class="item-list clearfix" data-id="4">4</li>
+            <li class="item-list clearfix" data-id="7">7</li>
+            <li class="item-list clearfix" data-id="8">8</li>
+            <li class="item-list clearfix" data-id="12">12</li>
+        </ul>
+    </div>
+</body>
+
+</html>

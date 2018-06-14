@@ -1,0 +1,43 @@
+.width-limiter{
+	width: 980px;
+	margin: 0 auto;
+}
+.infocard{
+	.marquee{
+		border: 1px solid gray;
+		ul{
+			position: relative;
+			display: flex;
+			// transition: left 5s;
+			// transition-timing-function:linear;
+			li{
+				width: 285px;
+				margin: 0 10px;
+				flex-shrink:0;
+			}
+		}
+	}
+}
+
+
+
+
+
+.marquee ul {
+  // display: block;
+  // width: 200%;
+  // height: 30px;
+
+
+  // animation: marquee 5s linear infinite;
+}
+
+.marquee span {
+  float: left;
+  width: 50%;
+}
+
+@keyframes marquee {
+  0% { left: -(100%); }
+  100% { left: -(100%); }
+}

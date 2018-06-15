@@ -1,3 +1,7 @@
+
+main{
+	overflow: hidden;
+}
 .width-limiter{
 	width: 980px;
 	margin: 0 auto;
@@ -6,14 +10,24 @@
 	.marquee{
 		border: 1px solid gray;
 		ul{
+			pointer-events:none;
 			position: relative;
 			display: flex;
-			// transition: left 5s;
-			// transition-timing-function:linear;
+			transition: left 3s;
+			transition-timing-function:linear;
 			li{
 				width: 285px;
 				margin: 0 10px;
 				flex-shrink:0;
+				img{
+					
+				}
+				*{
+					-webkit-user-select: none;  /* Chrome all / Safari all */
+					  -moz-user-select: none;     /* Firefox all */
+					  -ms-user-select: none;      /* IE 10+ */
+					  user-select: none;
+				}
 			}
 		}
 	}

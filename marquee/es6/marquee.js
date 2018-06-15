@@ -87,27 +87,33 @@ class Marquee {
 
   		// if(eStart){
   			cursorStartX = eStart ? (isMouse ? e.pageX : e.targetTouches[0].pageX) : cursorStartX;
-  			newStartX = cursorStartX
-  				currentPos = eStart ? parseInt(that.$ul.css('left')) : currentPos ;
+  				startPos = eStart ? parseInt(that.$ul.css('left')) : startPos ;
   			// orgPos = this.$ul.css('left');
-  			// cursorX = isMouse ? e.pageX : e.targetTouches[0].pageX
-  			if(eStart)
+  			cursorX = isMouse ? e.pageX : e.targetTouches[0].pageX
+  			if(eStart){
   				holding = true;
-  			if(eEnd)
-  				holding = false;
-  			if(eMove){
-
   			}
+  			if(eMove && holding){
+  				let dragged = cursorStartX - cursorX;
+  				let targetPos = currentPos - dragged;
+  				console.log('stt'+startPos)
+  				if(currentPos < that.calculated.endX){
+  					currentPos = that.calculated.startX;
+  					startPos = that.calculated.startX;
+  					console.log('over')
+  				}
+  				currentPos = startPos - dragged;
+  				that.$ul.css({
+  					'transition-duration':'0s',
+  					'left': currentPos})
+  			}
+  			if(eEnd){
+  				holding = false;
+  			}
+  			
   		// }
 
-  		let props = {
-  			cursorStartX,
-  			cursorX: isMouse ? e.pageX : e.targetTouches[0].pageX,
-  			holding,
-  			currentPos,
-  			newStartX
-  		}
-  		that.drag(e, props);
+  		
 
   	})
 

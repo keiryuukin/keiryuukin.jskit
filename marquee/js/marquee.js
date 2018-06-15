@@ -104,23 +104,32 @@ var Marquee = function () {
 
         // if(eStart){
         cursorStartX = eStart ? isMouse ? e.pageX : e.targetTouches[0].pageX : cursorStartX;
-        newStartX = cursorStartX;
-        currentPos = eStart ? parseInt(that.$ul.css('left')) : currentPos;
+        startPos = eStart ? parseInt(that.$ul.css('left')) : startPos;
         // orgPos = this.$ul.css('left');
-        // cursorX = isMouse ? e.pageX : e.targetTouches[0].pageX
-        if (eStart) holding = true;
-        if (eEnd) holding = false;
-        if (eMove) {}
+        cursorX = isMouse ? e.pageX : e.targetTouches[0].pageX;
+        if (eStart) {
+          holding = true;
+        }
+        if (eMove && holding) {
+          var dragged = cursorStartX - cursorX;
+          var targetPos = currentPos - dragged;
+          console.log('stt' + startPos);
+          if (currentPos < that.calculated.endX) {
+            currentPos = that.calculated.startX;
+            startPos = that.calculated.startX;
+            console.log('over');
+          }
+          currentPos = startPos - dragged;
+          that.$ul.css({
+            'transition-duration': '0s',
+            'left': currentPos });
+        }
+        if (eEnd) {
+          holding = false;
+        }
+
         // }
 
-        var props = {
-          cursorStartX: cursorStartX,
-          cursorX: isMouse ? e.pageX : e.targetTouches[0].pageX,
-          holding: holding,
-          currentPos: currentPos,
-          newStartX: newStartX
-        };
-        that.drag(e, props);
       });
     }
   }, {
